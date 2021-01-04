@@ -303,6 +303,11 @@ while getopts ":abcdefswxyzh" arg; do
     f)
 	    system_time
 		e_run
+        ck_run
+		sd_run
+		c_run
+		diy
+		love_run
 		update_cron
 		echo "任务已完成" >>$LOG_HTM 2>&1
         exit 0
@@ -310,6 +315,7 @@ while getopts ":abcdefswxyzh" arg; do
     s)
         ck_run
 		sd_run
+		c_run
 		diy
 		love_run
         exit 0
