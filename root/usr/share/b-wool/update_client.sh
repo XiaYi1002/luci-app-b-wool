@@ -39,6 +39,8 @@ cancel() {
 	echo "更新完毕...若功能异常...重启下设备...实在不行就卸载重装..." >>$LOG_HTM 2>&1
 	echo "清理垃圾..." >>$LOG_HTM 2>&1
 	rm -rf $jd_dir2/luci-app-b-wool
+	rm -rf /tmp/luci-modulecache
+	rm -f /tmp/luci-indexcache
 	else
 	echo "文件拉取失败...建议开启梯子进行更新..." >>$LOG_HTM 2>&1
 	rm -rf $jd_dir2/luci-app-b-wool
