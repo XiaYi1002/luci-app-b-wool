@@ -1,0 +1,462 @@
+<%+cbi/valueheader%>
+<script src="/b-wool/jquery.min.js"></script>
+<style>
+	.modals-bg {
+		position: fixed;
+		z-index: 999;
+		width: 100%;
+		height: 100%;
+		left: 0;
+		top: 0;
+		background: rgba(255, 255, 255, 0.8);
+		display: none;
+	}
+
+	.modals {
+		position: fixed;
+		z-index: 100;
+		width: 60%;
+		height: 500px;
+		background: #172b4d;
+		left: 20%;
+		top: 15%;
+		color: #fff;
+		border-radius: 10px;
+		padding: 20px;
+
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		/* Firefox */
+		-webkit-box-sizing: border-box;
+		/* Safari */
+	}
+
+	.modals h2 {
+		color: #fff;
+		background: transparent;
+		padding: 0 !important;
+	}
+
+	.modals h3 {
+		font-size: 14px;
+		color: #f5365c !important;
+		background: transparent;
+		margin: 0 0 1em 0;
+		padding: 0 0 0.5em 0;
+	}
+
+	#log_content3 {
+		border: 0;
+		width: 99%;
+		height: calc(100% - 4rem);
+		font-family: 'Lucida Console';
+		font-size: 11px;
+		background: transparent;
+		color: #FFFFFF;
+		outline: none;
+		padding-left: 3px;
+		padding-right: 22px;
+		overflow: hidden
+	}
+
+	.cbi-value-version {
+		word-wrap: break-word;
+		font-size: 0.875rem;
+		line-height: 1.6;
+		color: #5e72e4;
+		font-weight: bold;
+		padding: .7rem;
+		padding-left: 0;
+		width: 23rem;
+		float: left;
+		text-align: left;
+		display: table-cell;
+	}
+
+	@media screen and (max-width: 1024px) {
+		.modals {
+			position: fixed;
+			z-index: 100;
+			width: 80%;
+			height: 500px;
+			background: #172b4d;
+			left: 10%;
+			top: 15%;
+			color: #fff;
+			border-radius: 10px;
+			padding: 20px;
+		}
+	}
+
+	@media screen and (max-width: 700px) {
+		.modals-bg {
+			position: fixed;
+			z-index: 100000;
+
+		}
+
+		.modals {
+			width: 100%;
+			height: 100%;
+			left: 0;
+			top: 0;
+		}
+	}
+
+</style>
+<%+cbi/valuefooter%>
+<%+cbi/valueheader%>
+<label class="cbi-value-title">操作</label>
+<div class="cbi-value-field">
+<input class="cbi-button cbi-button-reload" id="update_service" type="button" size="0"
+		value="初始化啦">
+		<input class="cbi-button cbi-button-reload" id="start_service" type="button" size="0"
+		value="启动容器">
+	<input class="cbi-button cbi-button-reset" id="restart_service" type="button" size="0"
+		value="重启容器">
+		<input class="cbi-button cbi-button-remove" id="stop_service" type="button" size="0"
+		value="停止容器">
+		<input class="cbi-button cbi-button-remove" id="delete_service" type="button" size="0"
+		value="删除容器">
+		<br>初始化、删除容器：会删除所有容器和日志等文件，然后再重新生成，请谨慎操作
+		<br><font color="red">不友好提示：第一次启动会下载镜像，建议挂梯子....</font>
+</div>
+
+<%+cbi/valuefooter%>
+<%+cbi/valueheader%>
+
+<label class="cbi-value-title">配置</label>
+<div class="cbi-value-field">
+		<input class="cbi-button cbi-button-reload" id="update_cron" type="button" size="0"
+		value="更新计划任务">
+		<input class="cbi-button cbi-button-reload" id="update_list" type="button" size="0"
+		value="重置计划任务">
+		<input class="cbi-button cbi-button-remove" id="update_config" type="button" size="0"
+		value="重置配置文件">
+		<br>更新计划任务：更新定时任务计划
+		<br>重置计划任务：拉取云端计划任务列表crontab.list并替换掉本地任务列表crontab.list
+		<br>重置配置文件：拉取云端config.sh配置文件并替换掉本地config.sh
+		<br><font color="red">不友好提示：拉取云端文件可能会卡主，建议挂梯子....</font>
+</div>
+
+
+<%+cbi/valuefooter%>
+<%+cbi/valueheader%>
+
+<label class="cbi-value-title">其他</label>
+<div class="cbi-value-field">
+<input class="cbi-button cbi-button-reload" id="get_sc" type="button" size="0"
+		value="提取互助码">
+<input class="cbi-button cbi-button-reload" id="update_app" type="button" size="0"
+		value="更新插件啦">
+		<br>提取互助码：首次运行等待24小时再进行提取，或者手动运行相关脚本，再执行提取
+		<br><font color="red">更新插件啦：实验性功能，如需使用请挂梯子运行...</font>
+</div>
+<%+cbi/valueheader%>
+<%+cbi/valuefooter%>
+
+<script type="text/javascript">
+
+	const SAVE_URL = '<%=luci.dispatcher.build_url("admin", "services", "b-wool","run")%>';
+	var needUpdate = false;
+	var newVersion;
+	var _responseLen;
+	var noChange = 0;
+	var modal = '<div class="modals-bg">' +
+		'<div class="modals">' +
+		'<h2>薅羊毛脚本正在运行</h2>' +
+		'<h3 style="margin-left:0;"><%:Service is running,Please do not refresh!%></h3>' +
+		'<textarea cols="63" rows="28" wrap="on" readonly="readonly" id="log_content3" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>' +
+		'</div>' +
+		'</div>';
+		
+		function yesno() {
+		var mystr=confirm("确定要执行相关操作？");
+              if(mystr==true){
+                  return true;
+             }
+             else{
+                 return false;
+             }
+		}
+
+	//显示并开始刷新
+	function update_cron() {
+		$("body").append(modal);
+		$(".modals-bg").show();
+		setTimeout("get_realtime_log();", 500);
+	}
+	//更新计划任务按钮
+	$("#update_cron").click(function () {
+	if (yesno()){
+	var data = {
+				good: "up_cron"
+				}
+		$.ajax({
+			type: "post",
+			url: SAVE_URL,
+			//dataType : "json",
+			data : data,
+			success: function (d) {
+					update_cron();
+			}
+		});
+		return false;
+		}
+		});	
+		
+	//显示并开始刷新
+	function update_config() {
+		$("body").append(modal);
+		$(".modals-bg").show();
+		setTimeout("get_realtime_log();", 500);
+	}
+	//更新config
+	$("#update_config").click(function () {
+	if (yesno()){
+	var data = {
+				good: "up_config"
+				}
+		$.ajax({
+			type: "post",
+			url: SAVE_URL,
+			//dataType : "json",
+			data : data,
+			success: function (d) {
+					update_config();
+			}
+		});
+		return false;
+		}
+		});			
+
+	//显示并开始刷新
+	function update_app() {
+		$("body").append(modal);
+		$(".modals-bg").show();
+		setTimeout("get_realtime_log();", 500);
+	}
+	//更新config
+	$("#update_app").click(function () {
+	if (yesno()){
+	var data = {
+				good: "up_app"
+				}
+		$.ajax({
+			type: "post",
+			url: SAVE_URL,
+			//dataType : "json",
+			data : data,
+			success: function (d) {
+					update_app();
+			}
+		});
+		return false;
+		}
+		});
+		
+	//显示并开始刷新
+	function start_service() {
+		$("body").append(modal);
+		$(".modals-bg").show();
+		setTimeout("get_realtime_log();", 500);
+	}
+	//启动容器
+	$("#start_service").click(function () {
+	if (yesno()){
+	var data = {
+				good: "st_service"
+				}
+		$.ajax({
+			type: "post",
+			url: SAVE_URL,
+			//dataType : "json",
+			data : data,
+			success: function (d) {
+					start_service();
+			}
+		});
+		return false;
+		}
+		});		
+
+	//显示并开始刷新
+	function restart_service() {
+		$("body").append(modal);
+		$(".modals-bg").show();
+		setTimeout("get_realtime_log();", 500);
+	}
+	//重启容器
+	$("#restart_service").click(function () {
+	if (yesno()){
+	var data = {
+				good: "rt_service"
+				}
+		$.ajax({
+			type: "post",
+			url: SAVE_URL,
+			//dataType : "json",
+			data : data,
+			success: function (d) {
+					restart_service();
+			}
+		});
+		return false;
+		}
+		});
+		
+		//显示并开始刷新
+	function stop_service() {
+		$("body").append(modal);
+		$(".modals-bg").show();
+		setTimeout("get_realtime_log();", 500);
+	}
+	//关闭容器
+	$("#stop_service").click(function () {
+	if (yesno()){
+	var data = {
+				good: "sp_service"
+				}
+		$.ajax({
+			type: "post",
+			url: SAVE_URL,
+			//dataType : "json",
+			data : data,
+			success: function (d) {
+					stop_service();
+			}
+		});
+		return false;
+		}
+		});
+
+	//显示并开始刷新
+	function delete_service() {
+		$("body").append(modal);
+		$(".modals-bg").show();
+		setTimeout("get_realtime_log();", 500);
+	}
+	//删除容器
+	$("#delete_service").click(function () {
+	if (yesno()){
+	var data = {
+				good: "del_service"
+				}
+		$.ajax({
+			type: "post",
+			url: SAVE_URL,
+			//dataType : "json",
+			data : data,
+			success: function (d) {
+					delete_service();
+			}
+		});
+		return false;
+		}
+		});
+
+	//显示并开始刷新
+	function update_list() {
+		$("body").append(modal);
+		$(".modals-bg").show();
+		setTimeout("get_realtime_log();", 500);
+	}
+	//重置计划任务
+	$("#update_list").click(function () {
+	if (yesno()){
+	var data = {
+				good: "up_list"
+				}
+		$.ajax({
+			type: "post",
+			url: SAVE_URL,
+			//dataType : "json",
+			data : data,
+			success: function (d) {
+					update_list();
+			}
+		});
+		return false;
+		}
+		});
+		
+	//显示并开始刷新
+	function update_service() {
+		$("body").append(modal);
+		$(".modals-bg").show();
+		setTimeout("get_realtime_log();", 500);
+	}
+	//初始化按钮
+	$("#update_service").click(function () {
+	if (yesno()){
+	var data = {
+				good: "up_service"
+				}
+		$.ajax({
+			type: "post",
+			url: SAVE_URL,
+			//dataType : "json",
+			data : data,
+			success: function (d) {
+					update_service();
+			}
+		});
+		return false;
+		}
+		});	
+		
+//显示并开始刷新
+	function get_sc() {
+		$("body").append(modal);
+		$(".modals-bg").show();
+		setTimeout("get_realtime_log();", 500);
+	}
+	//提取助力码按钮
+	$("#get_sc").click(function () {
+	var data = {
+				good: "get_c"
+				}
+		$.ajax({
+			type: "post",
+			url: SAVE_URL,
+			//dataType : "json",
+			data : data,
+			success: function (d) {
+					get_sc();
+			}
+		});
+		return false;
+		});	
+		
+//默认		
+	function get_realtime_log() {
+		$.ajax({
+			url: '/b-wool.htm?v=' + parseInt(Math.random() * 100000000),
+			dataType: 'html',
+			error: function (xhr) {
+				setTimeout("get_realtime_log();", 1000);
+			},
+			success: function (response) {
+				var retArea = document.getElementById("log_content3");
+				if (response.search("任务已完成") != -1) {
+					noChange++;
+				}
+				console.log(noChange);
+				if (noChange > 10) {
+					window.location.href = '<%=luci.dispatcher.build_url("admin", "services", "b-wool")%>';
+					return false;
+				} else {
+					setTimeout("get_realtime_log();", 250);
+				}
+				retArea.value = response;
+				retArea.scrollTop = retArea.scrollHeight;
+				_responseLen = response.length;
+			},
+			error: function () {
+				setTimeout("get_realtime_log();", 500);
+			}
+		});
+	}
+
+		
+</script>

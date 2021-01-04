@@ -1,0 +1,5 @@
+config global
+	option jd_dir '/opt/jd_base'
+	option notify_enable '2'
+	ption love_code '1'
+	

@@ -1,0 +1,11 @@
+{
+    "luci-b-wool": {
+        "description": "Luci for JD",
+        "read": {
+            "uci": [ "b-wool" ]
+        },
+        "write": {
+            "uci": [ "b-wool" ]
+        }
+    }
+}
