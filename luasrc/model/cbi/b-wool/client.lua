@@ -39,6 +39,12 @@ o= s:option(DynamicList, "cookiebkye", translate("cookies"))
 o.rmempty = false
 o.description = translate("<br/>必填项 不填初始化不了<br/>Cookie的具体形式：pt_key=xxxxxxxxxx;pt_pin=xxxx; <br/>由上到下第一个为cookie1<br/>注：cookies不要带有空格")
 
+--随机延迟
+o =s:option(Value, "qiandao_stop", translate("定义随机延迟启动任务"))
+o.default = "300"
+o.rmempty = false
+o.description = translate("<br/>如果任务不是必须准点运行的任务，那么给它增加一个随机延迟，由你定义最大延迟时间，单位为秒")
+
 --签到延迟
 o =s:option(Value, "bean_stop", translate("定义每日签到的延迟时间"))
 o.default = "0"
@@ -64,7 +70,7 @@ o.rmempty = false
 
 o= s:option(DynamicList, "jxgc_sharecode", translate("京喜工厂互助码"))
 o.rmempty = false
-o.description = translate("<br/>以上填写他人助力码为他人助力（其余项目请直接修改config文件）")
+o.description = translate("<br/>以上项目是填写他人助力码，为他人助力")
 
 --爱心助力
 o = s:option(Flag, "love_code", translate("为我助力"))

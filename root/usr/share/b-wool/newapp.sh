@@ -55,6 +55,7 @@ cancel() {
 }
 
 jd_dir2=$(uci_get_by_type global jd_dir)
+love_code=$(uci_get_by_type global love_code)
 #处理互助码	
 	#定义京喜工厂	
 	jxsc=$(uci_get_by_type global jxgc_sharecode)
@@ -105,6 +106,7 @@ b_run() {
 c_run() {
 	notify_enable=$(uci_get_by_type global notify_enable)
 	bean_stop=$(uci_get_by_type global bean_stop)
+	qiandao_stop=$(uci_get_by_type global qiandao_stop)
 	sckey=$(uci_get_by_type global sckey)
 	qywx_am=$(uci_get_by_type global qywx_am)
 	echo "配置参数..." >>$LOG_HTM 2>&1
@@ -125,6 +127,9 @@ c_run() {
 #签到延迟
     sed -i 's/^export JD_BEAN_STOP=.*$/export JD_BEAN_STOP=\""/g' $jd_dir2/config/config.sh
     sed -i 's/^export JD_BEAN_STOP=.*$/export JD_BEAN_STOP=\"'$bean_stop'\"/g' $jd_dir2/config/config.sh
+#随机延迟
+    sed -i 's/^RandomDelay=.*$/RandomDelay=\""/g' $jd_dir2/config/config.sh
+    sed -i 's/^RandomDelay=.*$/RandomDelay=\"'$qiandao_stop'\"/g' $jd_dir2/config/config.sh
 #企业微信应用消息推送
     sed -i 's/^export QYWX_AM=.*$/export QYWX_AM=\""/g' $jd_dir2/config/config.sh
     sed -i 's/^export QYWX_AM=.*$/export QYWX_AM=\"'$qywx_am'\"/g' $jd_dir2/config/config.sh
