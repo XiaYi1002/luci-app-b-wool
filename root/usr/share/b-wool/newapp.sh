@@ -99,7 +99,7 @@ b_run() {
 	if [ $update_enable -eq 1 ]; then
 	docker run -dit -v $jd_dir2/config:/jd/config -v $jd_dir2/log:/jd/log --name jd_base --hostname jd_base -m 256M -e ENABLE_WEB_PANEL=false --restart always --network host evinedeng/evinedeng/jd:gitee >>$LOG_HTM 2>&1
 	else
-    docker run -dit -v $jd_dir2/config:/jd/config -v $jd_dir2/log:/jd/log --name jd_base --hostname jd_base -m 256M --restart always --network host evinedeng/jd >>$LOG_HTM 2>&1
+    docker run -dit -v $jd_dir2/config:/jd/config -v $jd_dir2/log:/jd/log --name jd_base --hostname jd_base -m 256M -e ENABLE_WEB_PANEL=false --restart always --network host evinedeng/jd >>$LOG_HTM 2>&1
 	fi
 }
 
