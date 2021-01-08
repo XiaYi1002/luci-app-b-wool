@@ -86,7 +86,7 @@ o.description = translate("<br/>残缺功能，所以参数中不可带有shell�
 --手动执行脚本
 o = s:option(Value, "sd_run", translate("手动执行脚本"))
 o.rmempty = true
-o.description = translate("<br/>1、填入需要执行的脚本名称，如京豆变动通知脚本：jd_bean_change  （不带后缀）<br/>2、点击 保存&应用 即可<br/>手动执行脚本命令：<br/>docker exec jd_base bash jd 脚本名称 now")
+o.description = translate("<br/>1、填入需要执行的脚本名称，如京豆变动通知脚本：jd_bean_change（不带后缀）<br/>2、点击 保存&应用 即可<br/>手动执行脚本命令：<br/>docker exec jd_base bash jd 脚本名称 now")
 
 o = s:option(DummyValue, "", "")
 o.rawhtml = true
