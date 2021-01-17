@@ -20,12 +20,6 @@ o.default = ""
 o.rmempty = false
 o.description = translate("<br/>目录结尾不要带'/'")
 
-o = s:option(ListValue, "update_enable", translate("更新渠道"))
-o.default = 0
-o.rmempty = false
-o:value(0, translate("GitHub"))
-o:value(1, translate("Gitee"))
-
 --通知形式
 o = s:option(ListValue, "notify_enable", translate("通知形式"))
 o.default = 2
