@@ -6,7 +6,7 @@ m = Map(jd)
 -- [[ 薅羊毛Docker版-基本设置 ]]--
 
 s = m:section(TypedSection, "global",
-              translate("Base Config"))
+              translate("京东签到-Docker"))
 s.anonymous = true
 
 o = s:option(DummyValue, "", "")
@@ -76,6 +76,11 @@ o.description = translate("<br/>打钩则为插件作者助力，种豆得豆&�
 o= s:option(DynamicList, "diy_config", translate("定义config.sh参数"))
 o.rmempty = false
 o.description = translate("<br/>残缺功能，所以参数中不可带有shell特殊符号<br/>例：<br/>export MARKET_COIN_TO_BEANS=\"20\"<br/>export MARKET_REWARD_NOTIFY=\"true\"")
+
+o = s:option(Value, "jd_ua", translate("USER_AGENT"))
+o.rmempty = true
+o.description = translate("<br/>自定义js脚本的User-Agent，不懂不知不会User-Agent的请不要随意填写内容，随意填写了出错概不负责")
+
 
 --手动执行脚本
 o = s:option(Value, "sd_run", translate("手动执行脚本"))

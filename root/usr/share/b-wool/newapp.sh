@@ -95,7 +95,7 @@ a_run() {
 b_run() {
     update_enable=$(uci_get_by_type global update_enable)
     echo "部署容器..." >>$LOG_HTM 2>&1
-	echo "首次拉取镜像有点慢...最好挂梯子.." >>$LOG_HTM 2>&1
+	echo "首次拉取镜像有点慢...." >>$LOG_HTM 2>&1
 	docker run -dit -v $jd_dir2/config:/jd/config -v $jd_dir2/log:/jd/log --network host --name jd_base --hostname jd_base -e ENABLE_WEB_PANEL=false --restart always evinedeng/jd:gitee >>$LOG_HTM 2>&1
 }
 
@@ -103,8 +103,10 @@ c_run() {
 	notify_enable=$(uci_get_by_type global notify_enable)
 	bean_stop=$(uci_get_by_type global bean_stop)
 	qiandao_stop=$(uci_get_by_type global qiandao_stop)
-	sckey=$(uci_get_by_type global sckey)
+	sckey=$(uci_get_by_type global serverchan)
 	qywx_am=$(uci_get_by_type global qywx_am)
+	ua=$(uci_get_by_type global jd_ua)
+	
 	echo "配置参数..." >>$LOG_HTM 2>&1
 #Cookies 
 	j=1
@@ -129,6 +131,9 @@ c_run() {
 #企业微信应用消息推送
     sed -i 's/^export QYWX_AM=.*$/export QYWX_AM=\""/g' $jd_dir2/config/config.sh
     sed -i 's/^export QYWX_AM=.*$/export QYWX_AM=\"'$qywx_am'\"/g' $jd_dir2/config/config.sh
+#设置UA
+	sed -i '/export JD_USER_AGENT=/d' $jd_dir2/config/config.sh
+	echo "export JD_USER_AGENT=\"$ua\"" >>$jd_dir2/config/config.sh
 }
 
 d_run() {
@@ -160,9 +165,9 @@ ck_run() {
 #互助码提取
 allshare_code(){
     echo "提取互助码..." >>$LOG_HTM 2>&1
-	docker exec -it jd_base bash export_sharecodes
-	cd $jd_dir2/log/export_sharecodes
-    cat `ls -t *.log | head -n 1` >$LOG_HTM
+	docker exec -it jd_base bash jd jd_get_share_code now
+	cd $jd_dir2/log/jd_get_share_code
+    cat `ls -t *.log | head -n 1` >$LOG_HTM 2>&1
 }
 
 update_cron() {
