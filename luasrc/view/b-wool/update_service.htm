@@ -119,7 +119,13 @@
 		<input class="cbi-button cbi-button-remove" id="delete_service" type="button" size="0"
 		value="删除容器">
 		<br>初始化、删除容器：会删除所有容器和日志等文件，然后再重新生成，请谨慎操作
-		<br><font color="red">不友好提示：第一次启动会下载镜像，建议挂梯子....</font>
+		<br><font color="red">操作流程：
+		<br>1、填写Cookies 
+		<br>2、保存&应用
+		<br>3、初始化
+		<br>4、执行git_pull
+		<br>5、保存&应用
+		<br>6、如果配置文件没有的话，就执行一次重置配置文件，然后保存&应用</font>
 </div>
 
 <%+cbi/valuefooter%>
@@ -130,13 +136,13 @@
 		<input class="cbi-button cbi-button-reload" id="update_cron" type="button" size="0"
 		value="更新计划任务">
 		<input class="cbi-button cbi-button-reload" id="update_list" type="button" size="0"
-		value="重置计划任务">
+		value="执行git_pull">
 		<input class="cbi-button cbi-button-remove" id="update_config" type="button" size="0"
 		value="重置配置文件">
 		<br>更新计划任务：更新定时任务计划
-		<br>重置计划任务：拉取云端计划任务列表crontab.list并替换掉本地任务列表crontab.list
-		<br>重置配置文件：拉取云端config.sh配置文件并替换掉本地config.sh
-		<br><font color="red">不友好提示：拉取云端文件可能会卡主，建议挂梯子....</font>
+		<!-- <br>重置计划任务：拉取云端计划任务列表crontab.list并替换掉本地任务列表crontab.list -->
+		<br>重置配置文件：重置后需重新配置config.sh
+		<!-- <br><font color="red">不友好提示：拉取云端文件可能会卡主，建议挂梯子....</font> -->
 </div>
 
 
@@ -149,7 +155,7 @@
 		value="提取互助码">
 <input class="cbi-button cbi-button-reload" id="update_app" type="button" size="0"
 		value="更新插件啦">
-		<br>提取互助码：首次运行等待24小时再进行提取，或者手动运行相关脚本，再执行提取
+		<!-- <br>提取互助码：首次运行等待24小时再进行提取，或者手动运行相关脚本，再执行提取 -->
 		<br><font color="red">更新插件啦：实验性功能，如需使用请挂梯子运行且openwrt需要git插件...</font>
 </div>
 <%+cbi/valueheader%>

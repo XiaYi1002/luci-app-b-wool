@@ -85,10 +85,10 @@ a_run() {
 	mkdir -p $jd_dir2
     cd $jd_dir2
 	mkdir -p config
-	wget --no-check-certificate https://gitee.com/evine/jd-base/raw/v3/sample/config.sh.sample -O config/config.sh
-	sleep 1
-	wget --no-check-certificate https://gitee.com/evine/jd-base/raw/v3/sample/docker.list.sample -O config/crontab.list
-	sleep 1
+	#wget --no-check-certificate https://gitee.com/evine/jd-base/raw/v3/sample/config.sh.sample -O config/config.sh
+	#sleep 1
+	#wget --no-check-certificate https://gitee.com/evine/jd-base/raw/v3/sample/docker.list.sample -O config/crontab.list
+	#sleep 1
 	chmod -R 777 $jd_dir2
 }
 
@@ -96,7 +96,7 @@ b_run() {
     update_enable=$(uci_get_by_type global update_enable)
     echo "部署容器..." >>$LOG_HTM 2>&1
 	echo "首次拉取镜像有点慢...." >>$LOG_HTM 2>&1
-	docker run -dit -v $jd_dir2/config:/jd/config -v $jd_dir2/log:/jd/log --network host --name jd_base --hostname jd_base -e ENABLE_WEB_PANEL=false --restart always evinedeng/jd:gitee >>$LOG_HTM 2>&1
+	docker run -dit -v $jd_dir2/config:/jd/config -v $jd_dir2/log:/jd/log --network host --name jd_base --hostname jd_base --restart always evinedeng/jd:gitee >>$LOG_HTM 2>&1
 }
 
 c_run() {
@@ -139,16 +139,17 @@ c_run() {
 d_run() {
 	echo "config.sh" >>$LOG_HTM 2>&1
 	rm -rf $jd_dir2/config/config.sh
-	wget --no-check-certificate https://gitee.com/evine/jd-base/raw/v3/sample/config.sh.sample -O $jd_dir2/config/config.sh
+	#wget --no-check-certificate https://gitee.com/evine/jd-base/raw/v3/sample/config.sh.sample -O $jd_dir2/config/config.sh.sample
+	cp -r $jd_dir2/config/config.sh.sample $jd_dir2/config/config.sh
 	chmod -R 777 $jd_dir2
 }
 
-e_run() {
-	echo "替换crontab.list" >>$LOG_HTM 2>&1
-	rm -rf $jd_dir2/config/crontab.list
-	wget --no-check-certificate https://gitee.com/evine/jd-base/raw/v3/sample/docker.list.sample -O $jd_dir2/config/crontab.list
-	chmod -R 777 $jd_dir2
-}
+# e_run() {
+	# echo "替换crontab.list" >>$LOG_HTM 2>&1
+	# rm -rf $jd_dir2/config/crontab.list
+	# wget --no-check-certificate https://gitee.com/evine/jd-base/raw/v3/sample/docker.list.sample -O $jd_dir2/config/crontab.list
+	# chmod -R 777 $jd_dir2
+# }
 
 # 处理cookies空格
 ck_run() {
@@ -165,19 +166,19 @@ ck_run() {
 #互助码提取
 allshare_code(){
     echo "提取互助码..." >>$LOG_HTM 2>&1
-	docker exec -it jd_base bash jd jd_get_share_code now
+	docker exec jd_base bash jd jd_get_share_code now
 	cd $jd_dir2/log/jd_get_share_code
     cat `ls -t *.log | head -n 1` >$LOG_HTM 2>&1
 }
 
 update_cron() {
     echo "更新计划任务..." >>$LOG_HTM 2>&1
-    docker exec -it jd_base crontab /jd/config/crontab.list
+    docker exec jd_base crontab /jd/config/crontab.list
 }
 
 up_scripts() {
     echo "更新脚本..." >>$LOG_HTM 2>&1
-    docker exec -it jd_base bash git_pull
+    docker exec jd_base bash git_pull >>$LOG_HTM 2>&1
 }
 
 # 手动执行脚本
@@ -259,16 +260,23 @@ while getopts ":abcdefswxyzh" arg; do
     case "$arg" in
     a)
 	    system_time
+		y_run
+		z_run
 		run
 		a_run
+		d_run
 		c_run
 		b_run
-		love_run
-		diy
 		slepp 10
 		w_run
 		update_cron
 		up_scripts
+		d_run
+        ck_run
+		sd_run
+		c_run
+		diy
+		love_run
         echo "任务已完成" >>$LOG_HTM 2>&1
         exit 0
         ;;
@@ -303,13 +311,8 @@ while getopts ":abcdefswxyzh" arg; do
         ;;
     f)
 	    system_time
-		e_run
-        ck_run
-		sd_run
-		c_run
-		diy
-		love_run
-		update_cron
+		# e_run
+        up_scripts
 		echo "任务已完成" >>$LOG_HTM 2>&1
         exit 0
         ;;
