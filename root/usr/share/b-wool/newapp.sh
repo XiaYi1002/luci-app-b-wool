@@ -85,10 +85,7 @@ a_run() {
 	mkdir -p $jd_dir2
     cd $jd_dir2
 	mkdir -p config
-	#wget --no-check-certificate https://gitee.com/evine/jd-base/raw/v3/sample/config.sh.sample -O config/config.sh
-	#sleep 1
-	#wget --no-check-certificate https://gitee.com/evine/jd-base/raw/v3/sample/docker.list.sample -O config/crontab.list
-	#sleep 1
+	mkdir -p scripts
 	chmod -R 777 $jd_dir2
 }
 
@@ -96,7 +93,7 @@ b_run() {
     update_enable=$(uci_get_by_type global update_enable)
     echo "部署容器..." >>$LOG_HTM 2>&1
 	echo "首次拉取镜像有点慢...." >>$LOG_HTM 2>&1
-	docker run -dit -v $jd_dir2/config:/jd/config -v $jd_dir2/log:/jd/log --network host --name jd_base --hostname jd_base --restart always evinedeng/jd:gitee >>$LOG_HTM 2>&1
+	docker run -dit -v $jd_dir2/config:/jd/config -v $jd_dir2/log:/jd/log  -v $jd_dir2/scripts:/jd/scripts --network host --name jd_base --hostname jd_base --restart always xiumugg/5p:gitee >>$LOG_HTM 2>&1
 }
 
 c_run() {
@@ -131,25 +128,15 @@ c_run() {
 #企业微信应用消息推送
     sed -i 's/^export QYWX_AM=.*$/export QYWX_AM=\""/g' $jd_dir2/config/config.sh
     sed -i 's/^export QYWX_AM=.*$/export QYWX_AM=\"'$qywx_am'\"/g' $jd_dir2/config/config.sh
-#设置UA
-	sed -i '/export JD_USER_AGENT=/d' $jd_dir2/config/config.sh
-	echo "export JD_USER_AGENT=\"$ua\"" >>$jd_dir2/config/config.sh
 }
 
 d_run() {
 	echo "config.sh" >>$LOG_HTM 2>&1
 	rm -rf $jd_dir2/config/config.sh
-	#wget --no-check-certificate https://gitee.com/evine/jd-base/raw/v3/sample/config.sh.sample -O $jd_dir2/config/config.sh.sample
 	cp -r $jd_dir2/config/config.sh.sample $jd_dir2/config/config.sh
 	chmod -R 777 $jd_dir2
 }
 
-# e_run() {
-	# echo "替换crontab.list" >>$LOG_HTM 2>&1
-	# rm -rf $jd_dir2/config/crontab.list
-	# wget --no-check-certificate https://gitee.com/evine/jd-base/raw/v3/sample/docker.list.sample -O $jd_dir2/config/crontab.list
-	# chmod -R 777 $jd_dir2
-# }
 
 # 处理cookies空格
 ck_run() {
@@ -189,20 +176,7 @@ sd_run() {
 }
 
 love_run() {
-	#定义东东农场要为哪些人助力	
-	sed -i 's/^ForOtherFruit1=.*$/ForOtherFruit1=\""/g' $jd_dir2/config/config.sh
-	sed -i "s/^ForOtherFruit1=.*$/ForOtherFruit1=\"$ncsc\"/g" $jd_dir2/config/config.sh
-	
-	#定义种豆得豆要为哪些人助力
-	sed -i 's/^ForOtherBean1=.*$/ForOtherBean1=\""/g' $jd_dir2/config/config.sh
-	sed -i "s/^ForOtherBean1=.*$/ForOtherBean1=\"$zdsc\"/g" $jd_dir2/config/config.sh
-	
-	#定义京喜工厂要为哪些人助力
-	sed -i 's/^ForOtherDreamFactory1=.*$/ForOtherDreamFactory1=\""/g' $jd_dir2/config/config.sh
-	sed -i "s/^ForOtherDreamFactory1=.*$/ForOtherDreamFactory1=\"$jxsc\"/g" $jd_dir2/config/config.sh
 	if [ $love_code -eq 1 ]; then
-	sed -i "s/n_jlLwqcGcXI2GkoT0y8SQ==@//g" $jd_dir2/config/config.sh
-	sed -i "s/mlrdw3aw26j3wutynrw67pvnvv6srtt65du2asq@//g" $jd_dir2/config/config.sh
 	j=1
 	for ck in $(uci_get_by_type global cookiebkye)
 	do
@@ -213,21 +187,6 @@ love_run() {
 	else
 	echo "哼"
 	fi
-}
-
-diy() {
-    grep "diy_config" /etc/config/cy-wool >$jd_dir2/diy_config.log
-    sed -i "s/\'//g" $jd_dir2/diy_config.log
-    sed -i "s/list diy_config//g" $jd_dir2/diy_config.log
-    sed -i 's/^[ \t]*//g' $jd_dir2/diy_config.log
-    cat $jd_dir2/diy_config.log | while read linea
-	do
-	r=${linea#*=}
-	l=${linea%=*}
-	sed -i "s/^$l=.*$/$l=\"\"/g" $jd_dir2/config/config.sh
-	sed -i "s/^$l=.*$/$l=$r/g" $jd_dir2/config/config.sh
-	rm -rf $jd_dir2/diy_config.log
-	done
 }
 
 w_run() {
@@ -264,30 +223,20 @@ while getopts ":abcdefswxyzh" arg; do
 		z_run
 		run
 		a_run
-		d_run
-		c_run
 		b_run
-		slepp 10
 		w_run
-		update_cron
-		up_scripts
 		d_run
-        ck_run
-		sd_run
 		c_run
-		diy
 		love_run
-        echo "任务已完成" >>$LOG_HTM 2>&1
+		x_run
+        echo "任务已完成 记得点击一下 保存&应用 " >>$LOG_HTM 2>&1
         exit 0
         ;;
     b)
 	    system_time
 		d_run
 		c_run
-		w_run
-		up_scripts
 		love_run
-		diy
 		echo "任务已完成" >>$LOG_HTM 2>&1
         exit 0
         ;;
@@ -309,18 +258,10 @@ while getopts ":abcdefswxyzh" arg; do
 		echo "任务已完成" >>$LOG_HTM 2>&1
         exit 0
         ;;
-    f)
-	    system_time
-		# e_run
-        up_scripts
-		echo "任务已完成" >>$LOG_HTM 2>&1
-        exit 0
-        ;;
     s)
         ck_run
 		sd_run
 		c_run
-		diy
 		love_run
         exit 0
         ;;

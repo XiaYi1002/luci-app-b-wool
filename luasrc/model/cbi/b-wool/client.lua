@@ -55,31 +55,11 @@ o = s:option(Value, "serverchan", translate("Server酱 SCKEY"))
 o.rmempty = true
 o.description = translate("<br/>微信推送，基于Server酱服务<br/>教程： http://sc.ftqq.com/ 绑定并获取 SCKEY<br/>其他通知渠道请直接在配置文件（config.sh）修改")
 
---助力码
-o= s:option(DynamicList, "nc_sharecode", translate("东东农场互助码"))
-o.rmempty = false
-
-o= s:option(DynamicList, "zddd_sharecode", translate("种豆得豆互助码"))
-o.rmempty = false
-
-o= s:option(DynamicList, "jxgc_sharecode", translate("京喜工厂互助码"))
-o.rmempty = false
-o.description = translate("<br/>以上项目是填写他人助力码，为他人助力")
-
 --爱心助力
 o = s:option(Flag, "love_code", translate("为我助力"))
 o.default = "1"
 o.rmempty = false
 o.description = translate("<br/>打钩则为插件作者助力，种豆得豆&惊喜工厂两项，仅占用一个名额❥(^_-)爱你哦")
-
---diy脚本内容
-o= s:option(DynamicList, "diy_config", translate("定义config.sh参数"))
-o.rmempty = false
-o.description = translate("<br/>残缺功能，所以参数中不可带有shell特殊符号<br/>例：<br/>export MARKET_COIN_TO_BEANS=\"20\"<br/>export MARKET_REWARD_NOTIFY=\"true\"")
-
-o = s:option(Value, "jd_ua", translate("USER_AGENT"))
-o.rmempty = true
-o.description = translate("<br/>自定义js脚本的User-Agent，不懂不知不会User-Agent的请不要随意填写内容，随意填写了出错概不负责")
 
 
 --手动执行脚本

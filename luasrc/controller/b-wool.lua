@@ -36,9 +36,6 @@ function run()
 	--更新脚本
 	elseif up_code == "up_scripts" then
         luci.sys.call("/usr/share/b-wool/newapp.sh -e &")
-	--替换任务列表
-	elseif up_code == "up_list" then
-        luci.sys.call("/usr/share/b-wool/newapp.sh -f &")
 	--启动容器	
 	elseif up_code == "st_service" then
         luci.sys.call("/usr/share/b-wool/newapp.sh -w &")
