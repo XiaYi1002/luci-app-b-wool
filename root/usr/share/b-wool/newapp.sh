@@ -93,7 +93,7 @@ b_run() {
     update_enable=$(uci_get_by_type global update_enable)
     echo "部署容器..." >>$LOG_HTM 2>&1
 	echo "首次拉取镜像有点慢...." >>$LOG_HTM 2>&1
-	docker run -dit -v $jd_dir2/config:/jd/config -v $jd_dir2/log:/jd/log  -v $jd_dir2/scripts:/jd/scripts --network host --name jd_base --hostname jd_base --restart always xiumugg/5p:gitee >>$LOG_HTM 2>&1
+	docker run -dit -v $jd_dir2/config:/jd/config -v $jd_dir2/log:/jd/log --network host --name jd_base --hostname jd_base --restart always xiumugg/5p:gitee >>$LOG_HTM 2>&1
 }
 
 c_run() {
